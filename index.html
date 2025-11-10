@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Эрх Чөлөө: Мөрөөдлийн Төлөөх Амьдрал</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e6ffed 100%);
+            min-height: 100vh;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d5016;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo::before {
+            content: "🕊️";
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a:hover {
+            color: #2d5016;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, rgba(72, 187, 120, 0.15) 0%, rgba(56, 161, 105, 0.1) 100%), 
+                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:%23e6f7ff"/><stop offset="100%" style="stop-color:%23f0fff4"/></linearGradient></defs><rect width="1200" height="600" fill="url(%23sky)"/><path d="M0,450 Q300,400 600,450 T1200,450 L1200,600 L0,600 Z" fill="%2348bb78" opacity="0.2"/><path d="M0,480 Q300,430 600,480 T1200,480 L1200,600 L0,600 Z" fill="%232d5016" opacity="0.15"/><circle cx="900" cy="100" r="60" fill="%23ffd700" opacity="0.3"/></svg>');
+            background-size: cover;
+            background-position: center;
+            padding: 5rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "✦";
+            position: absolute;
+            top: 20%;
+            left: 10%;
+            font-size: 3rem;
+            color: rgba(72, 187, 120, 0.2);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: "✦ ✦";
+            position: absolute;
+            bottom: 20%;
+            right: 15%;
+            font-size: 2rem;
+            color: rgba(255, 215, 0, 0.2);
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            color: #2d5016;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            color: #4a5568;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            font-weight: 400;
+        }
+
+        .hero .author {
+            font-size: 1rem;
+            color: #718096;
+            font-style: italic;
+            margin-top: 2rem;
+        }
+
+        .hero .author::before,
+        .hero .author::after {
+            content: "—";
+            margin: 0 1rem;
+            color: #cbd5e0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .categories {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            margin: 4rem 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(72, 187, 120, 0.1);
+        }
+
+        .categories h2 {
+            text-align: center;
+            font-size: 2.2rem;
+            color: #2d5016;
+            margin-bottom: 3rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .categories h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            border-radius: 2px;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .category-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(72, 187, 120, 0.15);
+            border-color: rgba(72, 187, 120, 0.3);
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .category-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .category-card .icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .category-card:hover .icon {
+            transform: scale(1.1);
+        }
+
+        .category-card h3 {
+            color: #2d5016;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        .category-card p {
+            color: #4a5568;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .essay-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            padding: 4rem 3rem;
+            margin: 4rem 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            position: relative;
+        }
+
+        .essay-section::before {
+            content: '"';
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            font-size: 8rem;
+            color: rgba(72, 187, 120, 0.1);
+            font-family: Georgia, serif;
+            line-height: 1;
+            z-index: 0;
+        }
+
+        .essay-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .essay-content h2 {
+            color: #2d5016;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .essay-content p {
+            margin-bottom: 1.8rem;
+            font-size: 1.1rem;
+            color: #4a5568;
+            text-align: justify;
+            line-height: 1.9;
+        }
+
+        .essay-content .highlight {
+            background: linear-gradient(120deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0.1) 100%);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            color: #2d5016;
+            border-bottom: 2px solid rgba(72, 187, 120, 0.3);
+        }
+
+        .essay-content .key-point {
+            background: linear-gradient(135deg, rgba(72, 187, 120, 0.05) 0%, rgba(56, 161, 105, 0.05) 100%);
+            border-left: 5px solid #48bb78;
+            padding: 1.5rem;
+            margin: 2.5rem 0;
+            border-radius: 0 10px 10px 0;
+            font-style: italic;
+            position: relative;
+        }
+
+        .essay-content .key-point::before {
+            content: '💡';
+            position: absolute;
+            top: -15px;
+            left: 10px;
+            background: white;
+            padding: 0 5px;
+            font-size: 1.2rem;
+        }
+
+        .comments-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 4rem 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .comments-section h2 {
+            color: #2d5016;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .comments-section h2::before {
+            content: '💬';
+            font-size: 2rem;
+        }
+
+        .comment-form {
+            background: rgba(247, 250, 252, 0.7);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2.5rem;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .comment-form h3 {
+            color: #2d5016;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #48bb78;
+            box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.2);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(30deg);
+            transition: all 0.6s ease;
+        }
+
+        .btn:hover::after {
+            transform: translateX(100%) rotate(30deg);
+        }
+
+        .comments-list {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .comments-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .comments-list::-webkit-scrollbar-track {
+            background: rgba(226, 232, 240, 0.3);
+            border-radius: 10px;
+        }
+
+        .comments-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            border-radius: 10px;
+        }
+
+        .comment-item {
+            background: rgba(247, 250, 252, 0.7);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .comment-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .comment-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, #48bb78, #38a169);
+            border-radius: 15px 0 0 15px;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .comment-author {
+            font-weight: 700;
+            color: #2d5016;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .comment-author::before {
+            content: '👤';
+        }
+
+        .comment-date {
+            font-size: 0.85rem;
+            color: #a0aec0;
+        }
+
+        .comment-content {
+            color: #4a5568;
+            line-height: 1.7;
+        }
+
+        .no-comments {
+            text-align: center;
+            color: #a0aec0;
+            padding: 2rem;
+            font-style: italic;
+        }
+
+        footer {
+            background: linear-gradient(135deg, #2d5016 0%, #1e3a0f 100%);
+            color: #e2e8f0;
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: 6rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #48bb78, #38a169, #ffd700);
+        }
+
+        footer p {
+            margin-bottom: 0.8rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        footer .social-links {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        footer .social-links a {
+            color: #e2e8f0;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        footer .social-links a:hover {
+            color: #48bb78;
+            transform: translateY(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1.2rem;
+            }
+
+            .hero {
+                padding: 3rem 1.5rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .essay-section,
+            .comments-section,
+            .categories {
+                padding: 2.5rem 1.8rem;
+                margin: 3rem 0;
+            }
+
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .essay-section::before {
+                font-size: 6rem;
+                top: 1rem;
+                left: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav {
+                flex-direction: column;
+                gap: 1.2rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero .subtitle {
+                font-size: 1rem;
+            }
+
+            .essay-section,
+            .comments-section,
+            .categories {
+                padding: 2rem 1.5rem;
+            }
+
+            .essay-content h2 {
+                font-size: 2rem;
+            }
+
+            .essay-content p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="#" class="logo">Эрх Чөлөө</a>
+            <ul class="nav-links">
+                <li><a href="#home">Нүүр</a></li>
+                <li><a href="#dreams">Мөрөөдөл</a></li>
+                <li><a href="#creative">Бүтээлч сэтгэлгээ</a></li>
+                <li><a href="#growth">Хувь хүний өсөлт</a></li>
+                <li><a href="#contact">Холбоо барих</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <h1>Эрх Чөлөө: Мөрөөдлийн Төлөөх Амьдрал</h1>
+        <p class="subtitle">Хүн мөнгө, эд баялаг, эрх мэдлийн төлөө биш мөрөөдлийнхөө төлөө амьдрах нь жинхэнэ эрх чөлөө юм.</p>
+        <p class="author">Бүтээлч сэтгэлгээний түүх</p>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories">
+        <h2>Эрх Чөлөөний Гурван Тулгуур</h2>
+        <div class="category-grid">
+            <div class="category-card" onclick="scrollToSection('dreams')">
+                <div class="icon">🌟</div>
+                <h3>Мөрөөдөл</h3>
+                <p>Дотоод галт уулын чинь дуу. Мөнгөөр хэмжигдэхгүй, албан тушаалаар баталгааждаггүй зүйл.</p>
+            </div>
+            <div class="category-card" onclick="scrollToSection('creative')">
+                <div class="icon">🎨</div>
+                <h3>Бүтээлч сэтгэлгээ</h3>
+                <p>Хязгаарлагдмал бодлоос ангижирч, өөрийн үзэл баримтлалыг бүтээх чадвар.</p>
+            </div>
+            <div class="category-card" onclick="scrollToSection('growth')">
+                <div class="icon">🌱</div>
+                <h3>Хувь хүний өсөлт</h3>
+                <p>Өөрийн замаар явах, дотоод үнэ цэнэндээ үнэмшихэд орших жинхэнэ өсөлт.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Essay Section -->
+    <section class="essay-section container" id="dreams">
+        <div class="essay-content">
+            <h2>Эрх Чөлөө: Мөрөөдлийн Төлөөх Амьдрал</h2>
+            
+            <p>Эрх чөлөө гэдэг үгийг бид ихэвчлэн улс төрийн тайлбартай, хууль эрх зүйн хүрээнд ойлгодог. Хэн нэгэн "эрх чөлөөтэй" гэхэд бидэнд дарангуйллын хавчлагаас ангижирсан нийгэм, эсвэл санхүүгийн хараат бус байдлын дүрс буух нь элбэг. Гэвч энэ бол эрх чөлөөний зөвхөн гаднах хэлбэр. <span class="highlight">Жинхэнэ, гүний эрх чөлөө хүний дотоод сэтгэлд оршдог.</span> Хүн мөнгө, эд баялаг, эрх мэдлийн төлөө биш мөрөөдлийнхөө төлөө амьдрах тэр л мөчид л эрх чөлөө бүрэн утгаараа гэрэлтдэг.</p>
+
+            <p>Хүмүүс амьдралынхаа ихэнх цагийг "ирээдүйд" зориулдаг. Тэр ирээдүй нь ихэвчлэн материаллаг хэрэгцээ, нийгмийн статус, бусдын нүдэнд харагдах төрхөөр хэмжигддэг. "Их мөнгөтэй болбол аз жаргалтай болно", "Дээд албан тушаалд хүрвэл амжилттай эрх чөлөөтэй хүн болно" гэсэн итгэл үнэмшил биднийг удирддаг. Гэтал энэ нь хамгийн нууцхан боолчлолын нэг хэлбэр юм. Юунд хүрэхээ шийдэх эрх чинь хэн нэгний гарт, эсвэл хэмжигдэхүүнгүй зүйлийн хяналтанд байхад чи үнэхээр эрх чөлөөтэй юу?</p>
+
+            <div class="key-point">
+                Мөрөөдөл бол хүний дотоод галт уул. Энэ нь мөнгөөр хэмжигдэхгүй, албан тушаалаар баталгааждаггүй. Зураач хоосон ханадээр ч гэсэн санаагаа будаж чаддаг. Яруу найрагч ганц дэвтэр, харандаатай байхад л ертөнцийг үгээр буддаг.
+            </div>
+
+            <p>Эдгээр хүмүүсийн эрх чөлөөг тэдний санхүүгийн тайлангаар хэмжихийг оролдвол энэ бол том эндүүрэл. Тэдний эрх чөлөө бол өглөө босоод юу хийхээ өөрсдөө шийдэх, ямар нэгэн зүйлийн "төлөө" биш "учир" гэж амьдрахад оршдог.</p>
+
+            <p>Ийм амьдрал эхэндээ хэцүү. Чиний сонголтыг бусад нь "урваг ч" гэж нэрлэнэ, "тэнэг" гэж доромжилно. Гэвч энэ бол жинхэнэ эрх чөлөөний үнэ. <span class="highlight">Эрх чөлөө бол үргэлж тохиромжтой үед ирэхгүй.</span> Үүний төлөө тулах,тэмцэх ёстой. Өөрийнхөө дотоод дуу хоолойг сонсож, түүнийг дагах нь эхэндээ айдас, эргэлзээ, ганцаардал авчирдаг. Гэвч энэ зам дээр алхах тусам хүн өөрийгөө олдог. Өөрийнхөө бүтээлч чадвараа мэдэрдэг. Зорилгогүйгээр амьдрах нь зүгээр л оршин тогтнох, харин мөрөөдөлдөө хөтлөгдөн амьдрах нь бүтээлч эрх чөлөөтэй амьдрал.</p>
+
+            <p>Эрх чөлөөний хамгийн том хэлбэр бол сонголт. Өдөр бүр сэрээд чамайг юу удирдах вэ гэдгийг сонгох. Мөнгө үү, эсвэл мөрөөдөл үү? Дарамт уу, эсвэл догдлол уу? Хэн нэгний шүтэн бишрэх эдлэл байх уу, эсвэл өөрийн нандин бүхний төлөө тулах эр зоригтой хүн байх уу? <span class="highlight">Эрх чөлөө бол энэ мөчид чиний сонголтод хариуцлагатай байх, өөрийн замаар явах, бусдын хүлээлтэд биш өөрийн дотоод үнэ цэнэнд үнэмших.</span></p>
+
+            <p>Хүн бүр эрх чөлөөний төлөө төрдөг. Харамсалтай нь ихэнх нь түүнийгээ мартдаг. Тэд өлсгөлөнгийн айдас, нийгмийн дарамт, хүлээлтэнд хүлэгддэг. Гэвч эрх чөлөө бол авчирдаг зүйл биш, олж авдаг зүйл. Энэ бол дотоод сэтгэлээсээ эхлэх аян. Өөрийнхөө мөрөөдлийг нээх, түүний төлөө зоригтой алхах тэр л мөчид хүн үнэхээр эрх чөлөөтэй болдог. Энэ бол амьдралын хамгийн том баялаг, хамгийн үнэт эрдэнэ.</p>
+        </div>
+    </section>
+
+    <!-- Creative & Growth Sections (Placeholder) -->
+    <section id="creative" class="container">
+        <div class="essay-section">
+            <h2 style="color: #2d5016; margin-bottom: 2rem;">Бүтээлч сэтгэлгээ</h2>
+            <p style="font-size: 1.1rem; color: #4a5568; line-height: 1.8;">Энэ хэсэгт бүтээлч сэтгэлгээний талаар дэлгэрэнгүй нийтлэл, практик зөвлөгөө, амжилтын түүхүүдийг оруулах боломжтой. Хязгаарлагдмал бодлоос ангижирч, өөрийн үзэл баримтлалыг бүтээх замнал.</p>
+        </div>
+    </section>
+
+    <section id="growth" class="container">
+        <div class="essay-section">
+            <h2 style="color: #2d5016; margin-bottom: 2rem;">Хувь хүний өсөлт</h2>
+            <p style="font-size: 1.1rem; color: #4a5568; line-height: 1.8;">Өөрийн замаар явах, дотоод үнэ цэнэндээ үнэмшихэд орших жинхэнэ өсөлт. Хүн бүр эрх чөлөөний төлөө төрдөг, гэвч ихэнх нь түүнийгээ хэрхэн олж авах талаар мэдэхгүй байдаг.</p>
+        </div>
+    </section>
+
+    <!-- Comments Section -->
+    <section class="comments-section container">
+        <h2>Сэтгэгдэл үлдээх</h2>
+        
+        <form class="comment-form" id="commentForm">
+            <div class="form-group">
+                <label for="commentName">Таны нэр:</label>
+                <input type="text" id="commentName" required placeholder="Нэрээ оруулна уу">
+            </div>
+            <div class="form-group">
+                <label for="commentMessage">Сэтгэгдэл:</label>
+                <textarea id="commentMessage" rows="4" required placeholder="Таны сэтгэгдэл..."></textarea>
+            </div>
+            <button type="submit" class="btn">Сэтгэгдэл нэмэх</button>
+        </form>
+
+        <div class="comments-list" id="commentsList">
+            <div class="no-comments">
+                Сэтгэгдэл байхгүй байна. Та анхных нь байх уу? ✍️
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <p>© 2024 Эрх Чөлөө: Мөрөөдлийн Төлөөх Амьдрал</p>
+        <p>Жинхэнэ эрх чөлөө дотоод сэтгэлээс эхэлдэг</p>
+        <div class="social-links">
+            <a href="#" title="Facebook">📘</a>
+            <a href="#" title="Twitter">🐦</a>
+            <a href="#" title="Email">✉️</a>
+            <a href="#" title="RSS">📡</a>
+        </div>
+    </footer>
+
+    <!-- LocalStorage Comment System -->
+    <script>
+        // LocalStorage Comment System
+        class CommentSystem {
+            constructor() {
+                this.comments = JSON.parse(localStorage.getItem('freedomComments')) || [];
+                this.form = document.getElementById('commentForm');
+                this.list = document.getElementById('commentsList');
+                this.init();
+            }
+
+            init() {
+                this.form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addComment();
+                });
+                this.renderComments();
+            }
+
+            addComment() {
+                const name = document.getElementById('commentName').value.trim();
+                const message = document.getElementById('commentMessage').value.trim();
+
+                if (!name || !message) {
+                    alert('Бүх талбарыг бөглөнө үү!');
+                    return;
+                }
+
+                const comment = {
+                    id: Date.now(),
+                    name: name,
+                    message: message,
+                    date: new Date().toLocaleDateString('mn-MN', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })
+                };
+
+                this.comments.unshift(comment);
+                localStorage.setItem('freedomComments', JSON.stringify(this.comments));
+                
+                this.form.reset();
+                this.renderComments();
+                
+                // Show success message
+                const btn = this.form.querySelector('.btn');
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Амжилттай нэмлээ!';
+                btn.style.background = 'linear-gradient(135deg, #38a169 0%, #2f855a 100%)';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
+                }, 2000);
+            }
+
+            renderComments() {
+                if (this.comments.length === 0) {
+                    this.list.innerHTML = '<div class="no-comments">Сэтгэгдэл байхгүй байна. Та анхных нь байх уу? ✍️</div>';
+                    return;
+                }
+
+                this.list.innerHTML = this.comments.map(comment => `
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <span class="comment-author">${this.escapeHtml(comment.name)}</span>
+                            <span class="comment-date">${comment.date}</span>
+                        </div>
+                        <div class="comment-content">${this.escapeHtml(comment.message)}</div>
+                    </div>
+                `).join('');
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // Smooth scrolling and animations
+        document.addEventListener('DOMContentLoaded', () => {
+            new CommentSystem();
+            
+            // Category card click handler
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const sectionId = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    const section = document.getElementById(sectionId);
+                    if (section) {
+                        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+
+            // Navigation link smooth scroll
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const href = this.getAttribute('href');
+                    if (href.startsWith('#')) {
+                        const sectionId = href.substring(1);
+                        const section = document.getElementById(sectionId);
+                        if (section) {
+                            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }
+                });
+            });
+            
+            // Add animations on scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            // Observe sections for animation
+            document.querySelectorAll('.essay-section, .categories, .comments-section').forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(30px)';
+                section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
