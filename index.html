@@ -627,6 +627,18 @@
             }
         }
     </style>
+    
+    <!-- Supabase SDK -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        
+  
+        const supabaseUrl = 'https://bwzpbzkpjwmeiyacritb.supabase.co'; 
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3enBiemtwandtZWl5YWNyaXRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI4MDg2OTcsImV4cCI6MjA3ODM4NDY5N30.SuFdOT-prAv7HduY3i4YU-ONib1AOyaLdafYtS6VgfE'; 
+        
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        window.supabase = supabase;
+    </script>
 </head>
 <body>
     <!-- Header -->
@@ -695,7 +707,7 @@
         </div>
     </section>
 
-    <!-- Creative & Growth Sections (Placeholder) -->
+    <!-- Creative & Growth Sections -->
     <section id="creative" class="container">
         <div class="essay-section">
             <h2 style="color: #2d5016; margin-bottom: 2rem;">Бүтээлч сэтгэлгээ</h2>
@@ -745,15 +757,16 @@
         </div>
     </footer>
 
-    <!-- LocalStorage Comment System -->
-    <script>
-        // LocalStorage Comment System
+    <!-- Supabase Comment System -->
+    <script type="module">
+        const supabase = window.supabase;
+        
         class CommentSystem {
             constructor() {
-                this.comments = JSON.parse(localStorage.getItem('freedomComments')) || [];
                 this.form = document.getElementById('commentForm');
                 this.list = document.getElementById('commentsList');
                 this.init();
+                this.listenToComments();
             }
 
             init() {
@@ -761,10 +774,10 @@
                     e.preventDefault();
                     this.addComment();
                 });
-                this.renderComments();
+                this.loadComments();
             }
 
-            addComment() {
+            async addComment() {
                 const name = document.getElementById('commentName').value.trim();
                 const message = document.getElementById('commentMessage').value.trim();
 
@@ -773,52 +786,87 @@
                     return;
                 }
 
-                const comment = {
-                    id: Date.now(),
-                    name: name,
-                    message: message,
-                    date: new Date().toLocaleDateString('mn-MN', {
+                const btn = this.form.querySelector('.btn');
+                const originalText = btn.textContent;
+                btn.textContent = 'Илгээж байна...';
+                btn.disabled = true;
+
+                try {
+                    const { error } = await supabase
+                        .from('comments')
+                        .insert([{ name: name, message: message }]);
+
+                    if (error) throw error;
+
+                    this.form.reset();
+                    btn.textContent = '✅ Амжилттай нэмлээ!';
+                    btn.style.background = 'linear-gradient(135deg, #38a169 0%, #2f855a 100%)';
+                    
+                } catch (error) {
+                    console.error("Алдаа:", error);
+                    alert('Сэтгэгдлийг нэмэхэд алдаа гарлаа: ' + error.message);
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
+                    btn.disabled = false;
+                }, 2000);
+            }
+
+            async loadComments() {
+                try {
+                    const { data, error } = await supabase
+                        .from('comments')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+
+                    if (error) throw error;
+
+                    this.renderComments(data || []);
+                } catch (error) {
+                    console.error("Алдаа:", error);
+                    this.list.innerHTML = '<div class="no-comments">Сэтгэгдлийг ачаалахад алдаа гарлаа.</div>';
+                }
+            }
+
+            listenToComments() {
+                supabase
+                    .from('comments')
+                    .on('INSERT', () => {
+                        this.loadComments();
+                    })
+                    .subscribe();
+            }
+
+            renderComments(comments) {
+                if (!comments || comments.length === 0) {
+                    this.list.innerHTML = '<div class="no-comments">Сэтгэгдэл байхгүй байна. Та анхных нь байх уу? ✍️</div>';
+                    return;
+                }
+
+                this.list.innerHTML = comments.map(comment => {
+                    const date = new Date(comment.created_at).toLocaleDateString('mn-MN', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric',
                         hour: '2-digit',
                         minute: '2-digit'
-                    })
-                };
-
-                this.comments.unshift(comment);
-                localStorage.setItem('freedomComments', JSON.stringify(this.comments));
-                
-                this.form.reset();
-                this.renderComments();
-                
-                // Show success message
-                const btn = this.form.querySelector('.btn');
-                const originalText = btn.textContent;
-                btn.textContent = '✅ Амжилттай нэмлээ!';
-                btn.style.background = 'linear-gradient(135deg, #38a169 0%, #2f855a 100%)';
-                
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
-                }, 2000);
-            }
-
-            renderComments() {
-                if (this.comments.length === 0) {
-                    this.list.innerHTML = '<div class="no-comments">Сэтгэгдэл байхгүй байна. Та анхных нь байх уу? ✍️</div>';
-                    return;
-                }
-
-                this.list.innerHTML = this.comments.map(comment => `
-                    <div class="comment-item">
-                        <div class="comment-header">
-                            <span class="comment-author">${this.escapeHtml(comment.name)}</span>
-                            <span class="comment-date">${comment.date}</span>
+                    });
+                    
+                    return `
+                        <div class="comment-item">
+                            <div class="comment-header">
+                                <span class="comment-author">${this.escapeHtml(comment.name)}</span>
+                                <span class="comment-date">${date}</span>
+                            </div>
+                            <div class="comment-content">${this.escapeHtml(comment.message)}</div>
                         </div>
-                        <div class="comment-content">${this.escapeHtml(comment.message)}</div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
 
             escapeHtml(text) {
@@ -828,7 +876,6 @@
             }
         }
 
-        // Smooth scrolling and animations
         document.addEventListener('DOMContentLoaded', () => {
             new CommentSystem();
             
